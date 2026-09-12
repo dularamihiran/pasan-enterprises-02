@@ -1,0 +1,205 @@
+import React, { useMemo } from 'react';
+import { 
+  EyeIcon, 
+  ShoppingCartIcon, 
+  ClockIcon, 
+  PlusIcon,
+  UsersIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChartBarIcon,
+  BanknotesIcon,
+  DocumentTextIcon
+} from '@heroicons/react/24/outline';
+import authService from '../services/authService';
+
+const Sidebar = ({ isCollapsed, setIsCollapsed, activeTab, setActiveTab }) => {
+  // Get current user to check role-based access
+  const currentUser = authService.getCurrentUser();
+  
+  // Define which roles can access dashboard (ONLY admin)
+  const canAccessDashboard = currentUser && currentUser.role === 'admin';
+
+  // Memoize menu items to prevent recreation on every render
+  // Dashboard is conditionally included based on user role
+  const menuItems = useMemo(() => {
+    const items = [];
+    
+    // Only show dashboard for admin role
+    if (canAccessDashboard) {
+      items.push({
+        id: 'dashboard',
+        name: 'Dashboard',
+        icon: ChartBarIcon,
+        gradient: 'from-blue-500 to-blue-600',
+      });
+    }
+    
+    // All other items are available to all authenticated users
+    items.push(
+      {
+        id: 'view-inventory',
+        name: 'View Inventory',
+        icon: EyeIcon,
+        gradient: 'from-green-500 to-green-600',
+      },
+      {
+        id: 'sell-item',
+        name: 'Sell Item',
+        icon: ShoppingCartIcon,
+        gradient: 'from-purple-500 to-purple-600',
+      },
+      {
+        id: 'quotation',
+        name: 'Quotation',
+        icon: DocumentTextIcon,
+        gradient: 'from-indigo-500 to-indigo-600',
+      },
+      {
+        id: 'past-orders',
+        name: 'Past Orders',
+        icon: ClockIcon,
+        gradient: 'from-orange-500 to-orange-600',
+      },
+      {
+        id: 'refunds',
+        name: 'Refunds',
+        icon: BanknotesIcon,
+        gradient: 'from-red-500 to-red-600',
+      },
+      {
+        id: 'add-inventory',
+        name: 'Add Inventory',
+        icon: PlusIcon,
+        gradient: 'from-teal-500 to-teal-600',
+      },
+      {
+        id: 'customers',
+        name: 'Customers',
+        icon: UsersIcon,
+        gradient: 'from-pink-500 to-pink-600',
+      }
+    );
+    
+    return items;
+  }, [canAccessDashboard]);
+
+  return (
+    <div className={`bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white transition-all duration-300 flex flex-col h-screen shadow-2xl border-r border-slate-700/50 ${
+      isCollapsed ? 'w-20' : 'w-72'
+    }`}>
+      {/* Header with Company Logo and Name */}
+      <div className="p-4 lg:p-6 border-b border-slate-700/50 bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3 lg:space-x-4">
+            <img 
+              src="/images/logo2.png" 
+              alt="Pasan Enterprises Logo" 
+              className="w-10 h-10 lg:w-12 lg:h-12 object-contain flex-shrink-0"
+              loading="lazy"
+            />
+            {!isCollapsed && (
+              <div className="transition-opacity duration-300 min-w-0">
+                <h1 className="text-base lg:text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent leading-tight">
+                  P.E. INDUSTRIAL AUTOMATION 
+                </h1>
+              </div>
+            )}
+          </div>
+          {!isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden lg:block p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-all duration-200 border border-slate-600/50 hover:border-slate-500/50 backdrop-blur-sm hover:shadow-lg flex-shrink-0"
+            >
+              <ChevronLeftIcon className="w-5 h-5 text-slate-300" />
+            </button>
+          )}
+        </div>
+        {isCollapsed && (
+          <div className="hidden lg:flex justify-center mt-4">
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-all duration-200 border border-slate-600/50 hover:border-slate-500/50 backdrop-blur-sm hover:shadow-lg"
+            >
+              <ChevronRightIcon className="w-5 h-5 text-slate-300" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation Menu */}
+      <nav className="flex-1 px-3 lg:px-4 py-4 lg:py-6 overflow-y-auto">
+        <ul className="space-y-2 lg:space-y-3">
+          {menuItems.map((item) => {
+            const IconComponent = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <li key={item.id}>
+                <button
+                  onClick={() => setActiveTab(item.id)}
+                  className={`group w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-3 lg:px-4'} py-2.5 lg:py-3 text-left transition-all duration-200 rounded-xl relative overflow-hidden ${
+                    isActive 
+                      ? 'bg-gradient-to-r ' + item.gradient + ' shadow-lg shadow-blue-500/25 scale-105' 
+                      : 'hover:bg-slate-800/50 hover:scale-105 hover:shadow-md'
+                  }`}
+                  title={isCollapsed ? item.name : ''}
+                >
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent rounded-xl"></div>
+                  )}
+                  <div className={`relative flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
+                    <div className={`p-1.5 lg:p-2 rounded-lg transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-white/20 shadow-lg' 
+                        : 'group-hover:bg-slate-700/50'
+                    }`}>
+                      <IconComponent className={`w-5 h-5 transition-all duration-200 ${
+                        isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'
+                      }`} />
+                    </div>
+                    {!isCollapsed && (
+                      <span className={`ml-3 lg:ml-4 text-sm font-medium transition-all duration-200 ${
+                        isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'
+                      }`}>
+                        {item.name}
+                      </span>
+                    )}
+                  </div>
+                  {isActive && !isCollapsed && (
+                    <div className="ml-auto">
+                      <div className="w-2 h-2 bg-white rounded-full opacity-75"></div>
+                    </div>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Footer */}
+      <div className="p-3 lg:p-4 border-t border-slate-700/50 bg-gradient-to-r from-slate-800/30 to-slate-900/30 backdrop-blur-sm">
+        {!isCollapsed ? (
+          <div className="text-center">
+            <div className="text-xs text-slate-400 space-y-1">
+              <p className="font-medium">&copy; 2026 P.E. INDUSTRIAL AUTOMATION</p>
+              <p className="text-slate-500">Version 1.0.6</p>
+            </div>
+            <div className="mt-2 lg:mt-3 flex justify-center space-x-1">
+              <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full animate-pulse delay-100"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full animate-pulse delay-200"></div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-pulse"></div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Memoize component to prevent unnecessary re-renders when parent re-renders
+export default React.memo(Sidebar);
