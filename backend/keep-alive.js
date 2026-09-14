@@ -5,7 +5,7 @@
 
 const https = require('https');
 
-const BACKEND_URL = 'https://pasan-enterprises-whk8.onrender.com';
+const BACKEND_URL = 'https://pasan-enterprises-02.onrender.com';
 const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
 function pingServer() {

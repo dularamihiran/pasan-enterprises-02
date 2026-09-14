@@ -5,7 +5,7 @@ const getBaseURL = () => {
     return 'http://localhost:5000/api';
   }
   // Production URL
-  return 'https://pasan-enterprises-whk8.onrender.com/api';
+  return 'https://pasan-enterprises-02.onrender.com/api';
 };
 
 const API_BASE_URL = getBaseURL();
