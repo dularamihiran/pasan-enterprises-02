@@ -1,0 +1,21 @@
+version: 1
+applications:
+  - appRoot: frontend
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            # Pin the API URL here so a stale REACT_APP_API_URL in the Amplify
+            # console cannot win (in CRA, shell env vars override every .env file).
+            - export REACT_APP_API_URL=https://pasan-enterprises-02.onrender.com/api
+            - npm run build
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*

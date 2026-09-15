@@ -9,7 +9,7 @@ const BACKEND_URL = 'https://pasan-enterprises-02.onrender.com';
 const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
 function pingServer() {
-  const url = `${BACKEND_URL}/api/health`;
+  const url = `${BACKEND_URL}/health`;
   
   console.log(`[${new Date().toISOString()}] Pinging server: ${url}`);
   
