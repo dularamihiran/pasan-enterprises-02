@@ -93,7 +93,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, activeTab, setActiveTab }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 lg:space-x-4">
             <img 
-              src="/images/logo2.png" 
+              src="/images/logo3.png" 
               alt="Pasan Enterprises Logo" 
               className="w-10 h-10 lg:w-12 lg:h-12 object-contain flex-shrink-0"
               loading="lazy"
@@ -101,7 +101,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, activeTab, setActiveTab }) => {
             {!isCollapsed && (
               <div className="transition-opacity duration-300 min-w-0">
                 <h1 className="text-base lg:text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent leading-tight">
-                  P.E. INDUSTRIAL AUTOMATION 
+                  PASAN ENTERPRISES
                 </h1>
               </div>
             )}
@@ -182,8 +182,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, activeTab, setActiveTab }) => {
         {!isCollapsed ? (
           <div className="text-center">
             <div className="text-xs text-slate-400 space-y-1">
-              <p className="font-medium">&copy; 2026 P.E. INDUSTRIAL AUTOMATION</p>
-              <p className="text-slate-500">Version 1.0.6</p>
+              <p className="font-medium">&copy; 2026 PASAN ENTERPRISES</p>
+              <p className="text-slate-500">Version 2.0.0</p>
             </div>
             <div className="mt-2 lg:mt-3 flex justify-center space-x-1">
               <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full animate-pulse"></div>
