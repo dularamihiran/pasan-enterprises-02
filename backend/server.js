@@ -18,17 +18,8 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ].filter(Boolean);
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+origin: true,
+credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
