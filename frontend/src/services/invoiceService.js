@@ -108,11 +108,19 @@ export const generateInvoice = async (saleData, orderData) => {
     // Load logo
     let logoBase64 = null;
     try {
-      logoBase64 = await loadImageAsBase64('/images/logo1.png');
+      logoBase64 = await loadImageAsBase64('/images/old_logo1.png');
     } catch (error) {
       console.warn('Could not load logo:', error);
     }
-    
+
+    // Load payment QR code
+    let qrBase64 = null;
+    try {
+      qrBase64 = await loadImageAsBase64('/images/qr.png');
+    } catch (error) {
+      console.warn('Could not load payment QR code:', error);
+    }
+
     // Function to add header to each page
     const addHeader = () => {
       // Add logo and watermark
@@ -136,7 +144,7 @@ export const generateInvoice = async (saleData, orderData) => {
       // Company details (top right)
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('P.E. INDUSTRIAL AUTOMATION (PVT). LTD', pageWidth - 15, 15, { align: 'right' });
+      doc.text('PASAN ENTERPRISES (PVT). LTD', pageWidth - 15, 15, { align: 'right' });
       
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -520,7 +528,7 @@ export const generateInvoice = async (saleData, orderData) => {
     yPosition += 6;
     doc.text('100% by cash on delivery or by a cheque draw to the account name of', 15, yPosition);
     yPosition += 5;
-    doc.text('"P.E.INDUSTRIAL AUTOMATION (PVT).LTD"', 15, yPosition);
+    doc.text('"PASAN ENTERPRISES (PVT).LTD"', 15, yPosition);
     yPosition += 10;
     
     // Warranty information (variable per item)
@@ -550,37 +558,106 @@ export const generateInvoice = async (saleData, orderData) => {
         yPosition += 4;
       });
     }
-    yPosition += 10;
-    
-    // Bank details
-    //checkNewPage(30);
-    //doc.setFont('helvetica', 'bold');
-    //doc.text('BANK DETAILS', 15, yPosition);
-    //doc.setFont('helvetica', 'normal');
-    //yPosition += 6;
-    //doc.text('BANK NAME - BOC BANK (KESBEWA BRANCH)', 15, yPosition);
-    //yPosition += 5;
-    //doc.text('ACCOUNT NAME - P.E. INDUSTRIAL AUTOMATION (PVT). LTD', 15, yPosition);
-    //yPosition += 5;
-    //doc.text('ACCOUNT NUMBER - 0094292544', 15, yPosition);
-    //yPosition += 5;
-    //doc.text('BRANCH CODE - 620', 15, yPosition);
-    //yPosition += 15;
-    
+    yPosition += 8;
+
+    // Additional terms
+    const termsBullets = [
+      'THE WARRANTY DOES NOT COVER RUNNING REPAIRS, WEAR AND TEAR OF ANY PARTS, OR DAMAGE CAUSED BY HIGH-CURRENT ELECTRIC BURNS.',
+      'A ONE-TIME FULL COMPREHENSIVE TRAINING WILL BE GIVEN FREE OF CHARGE.'
+    ];
+    termsBullets.forEach((bullet) => {
+      const bulletLines = doc.splitTextToSize(bullet, pageWidth - 35);
+      checkNewPage(bulletLines.length * 5);
+      doc.text('•', 15, yPosition);
+      bulletLines.forEach((line) => {
+        doc.text(line, 20, yPosition);
+        yPosition += 5;
+      });
+    });
+    yPosition += 5;
+
+    // Payment info box with QR code
+    const boxX = 15;
+    const boxWidth = 125;
+    const boxHeight = 42;
+    const qrSize = 34;
+    checkNewPage(boxHeight + 5);
+    const boxTop = yPosition;
+    doc.setLineWidth(0.4);
+    doc.rect(boxX, boxTop, boxWidth, boxHeight);
+
+    let infoY = boxTop + 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Payment Info:', boxX + 5, infoY);
+    doc.setLineWidth(0.3);
+    doc.line(boxX + 5, infoY + 1, boxX + 5 + doc.getTextWidth('Payment Info:'), infoY + 1);
+    infoY += 8;
+
+    doc.setFontSize(10);
+    const paymentInfo = [
+      ['BANK NAME - ', 'BOC BANK (KESBEWA BRANCH)'],
+      ['ACCOUNT NAME - ', 'PASAN ENTERPRISES'],
+      ['ACCOUNT NUMBER - ', '0086689388'],
+      ['BRANCH CODE - ', '620']
+    ];
+    paymentInfo.forEach(([label, value]) => {
+      doc.setFont('helvetica', 'normal');
+      doc.text(label, boxX + 5, infoY);
+      const labelWidth = doc.getTextWidth(label);
+      doc.setFont('helvetica', 'bold');
+      doc.text(value, boxX + 5 + labelWidth, infoY);
+      infoY += 6;
+    });
+
+    if (qrBase64) {
+      doc.addImage(qrBase64, 'PNG', boxX + boxWidth - qrSize - 4, boxTop + (boxHeight - qrSize) / 2, qrSize, qrSize);
+    }
+
+    doc.setFont('helvetica', 'normal');
+    doc.setLineWidth(0.2);
+    yPosition = boxTop + boxHeight + 12;
+
     // Thank you and signature
     checkNewPage(25);
     doc.text('Thank You.', 15, yPosition);
     yPosition += 5;
     doc.text('Yours Faithfully,', 15, yPosition);
     yPosition += 5;
-    doc.text('P.E.INDUSTRIAL AUTOMATION (PVT).LTD', 15, yPosition);
+    doc.text('PASAN ENTERPRISES (PVT).LTD', 15, yPosition);
     yPosition += 10;
     doc.text('Approved', 15, yPosition);
     yPosition += 5;
     doc.text('Pradeep Jayawardana', 15, yPosition);
     yPosition += 5;
     doc.text('Director', 15, yPosition);
-    
+    yPosition += 10;
+
+    // Delivery confirmation and signatures
+    checkNewPage(30);
+    const signatureLineWidth = 40;
+    const sellerSigX = pageWidth - 15 - signatureLineWidth;
+    const customerSigX = sellerSigX - 8 - signatureLineWidth;
+    const signatureLineY = yPosition + 15; // Leave space above the lines for signing
+
+    doc.setLineDashPattern([0.5, 0.7], 0);
+    doc.line(customerSigX, signatureLineY, customerSigX + signatureLineWidth, signatureLineY);
+    doc.line(sellerSigX, signatureLineY, sellerSigX + signatureLineWidth, signatureLineY);
+    doc.setLineDashPattern([], 0);
+
+    const signatureLabelY = signatureLineY + 5;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text("Customer's Signature", customerSigX + signatureLineWidth / 2, signatureLabelY, { align: 'center' });
+    doc.text("Seller's Signature", sellerSigX + signatureLineWidth / 2, signatureLabelY, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    const confirmationLines = doc.splitTextToSize('WE CONFIRM THAT THE MACHINES WERE RECEIVED WITHOUT ANY DEFECTS.', customerSigX - 25);
+    doc.text('•', 15, signatureLabelY);
+    confirmationLines.forEach((line, index) => {
+      doc.text(line, 20, signatureLabelY + index * 4);
+    });
+
     // Add footer to all pages
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
