@@ -223,7 +223,9 @@ export const generateInvoice = async (saleData, orderData) => {
     
     // Function to draw table header
     const drawTableHeader = () => {
-      const colPositions = [15, 30, 75, 110, 145, 175]; // No., Description, Qty, Unit Price, Warranty, Amount
+      // Warranty column removed - Description column widened to use the freed space.
+      // Old layout: [15, 30, 75, 110, 145, 175] // No., Description, Qty, Unit Price, Warranty, Amount
+      const colPositions = [15, 30, 120, 150, 175]; // No., Description, Qty, Unit Price, Amount
       
       // Check if we need a new page for header
       checkNewPage(15);
@@ -238,8 +240,8 @@ export const generateInvoice = async (saleData, orderData) => {
       doc.text('Description', colPositions[1], yPosition);
       doc.text('Qty', colPositions[2], yPosition);
       doc.text('Unit Price', colPositions[3] + 10, yPosition, { align: 'right' });
-      doc.text('Warranty', colPositions[4] + 15, yPosition, { align: 'right' });
-      doc.text('Amount', colPositions[5] + 20, yPosition, { align: 'right' });
+      // doc.text('Warranty', colPositions[4] + 15, yPosition, { align: 'right' });
+      doc.text('Amount', colPositions[4] + 20, yPosition, { align: 'right' });
       
       yPosition += 10;
       return colPositions;
@@ -268,19 +270,20 @@ export const generateInvoice = async (saleData, orderData) => {
       const itemTotal = unitPriceExVat * quantity;
       machinesSubtotalExVat += itemTotal;
       
-      const warrantyMonths = cartItem.warrantyMonths || item.warrantyMonths || 12;
-      
+      // Warranty column removed from the table
+      // const warrantyMonths = cartItem.warrantyMonths || item.warrantyMonths || 12;
+
       doc.text(itemNumber.toString(), colPositions[0], yPosition);
-      
-      // Handle long descriptions by wrapping text
+
+      // Handle long descriptions by wrapping text (limit raised from 20 to 40 chars for the wider column)
       const description = cartItem.name || item.name || 'Item';
-      if (description.length > 20) {
+      if (description.length > 40) {
         const words = description.split(' ');
         let line1 = '', line2 = '';
         let currentLength = 0;
-        
+
         for (let word of words) {
-          if (currentLength + word.length + 1 <= 20) {
+          if (currentLength + word.length + 1 <= 40) {
             line1 += (line1 ? ' ' : '') + word;
             currentLength += word.length + 1;
           } else {
@@ -298,8 +301,8 @@ export const generateInvoice = async (saleData, orderData) => {
       
       doc.text(quantity.toString(), colPositions[2], yPosition);
       doc.text(formatNumberWithCommas(unitPriceExVat), colPositions[3] + 10, yPosition, { align: 'right' });
-      doc.text(warrantyMonths.toString() + 'M', colPositions[4] + 15, yPosition, { align: 'right' });
-      doc.text(formatNumberWithCommas(itemTotal), colPositions[5] + 20, yPosition, { align: 'right' });
+      // doc.text(warrantyMonths.toString() + 'M', colPositions[4] + 15, yPosition, { align: 'right' });
+      doc.text(formatNumberWithCommas(itemTotal), colPositions[4] + 20, yPosition, { align: 'right' });
       
       yPosition += 5;
       
@@ -333,8 +336,8 @@ export const generateInvoice = async (saleData, orderData) => {
       
       // Machines subtotal
       doc.setFont('helvetica', 'bold');
-      doc.text('MACHINES SUBTOTAL:', colPositions[3], yPosition);
-      doc.text(`Rs. ${formatNumberWithCommas(machinesSubtotalExVat)}`, colPositions[5] + 20, yPosition, { align: 'right' });
+      doc.text('MACHINES SUBTOTAL:', colPositions[2], yPosition);
+      doc.text(`Rs. ${formatNumberWithCommas(machinesSubtotalExVat)}`, colPositions[4] + 20, yPosition, { align: 'right' });
       yPosition += 8;
       doc.setFont('helvetica', 'normal');
     }
@@ -355,15 +358,15 @@ export const generateInvoice = async (saleData, orderData) => {
           
           doc.text(itemNumber.toString(), colPositions[0], yPosition);
           
-          // Handle long extra descriptions
+          // Handle long extra descriptions (limit raised from 25 to 40 chars for the wider column)
           const description = extra.description;
-          if (description.length > 25) {
+          if (description.length > 40) {
             const words = description.split(' ');
             let line1 = '', line2 = '';
             let currentLength = 0;
-            
+
             for (let word of words) {
-              if (currentLength + word.length + 1 <= 25) {
+              if (currentLength + word.length + 1 <= 40) {
                 line1 += (line1 ? ' ' : '') + word;
                 currentLength += word.length + 1;
               } else {
@@ -381,8 +384,8 @@ export const generateInvoice = async (saleData, orderData) => {
           
           doc.text('1', colPositions[2], yPosition);
           doc.text(formatNumberWithCommas(extra.amount), colPositions[3] + 10, yPosition, { align: 'right' });
-          doc.text('-', colPositions[4] + 15, yPosition, { align: 'right' });
-          doc.text(formatNumberWithCommas(extra.amount), colPositions[5] + 20, yPosition, { align: 'right' });
+          // doc.text('-', colPositions[4] + 15, yPosition, { align: 'right' }); // Warranty column (removed)
+          doc.text(formatNumberWithCommas(extra.amount), colPositions[4] + 20, yPosition, { align: 'right' });
           
           yPosition += 8;
           itemNumber++;
@@ -396,8 +399,8 @@ export const generateInvoice = async (saleData, orderData) => {
       
       const extrasTotal = saleData.extras.reduce((sum, extra) => sum + (extra.amount || 0), 0);
       doc.setFont('helvetica', 'bold');
-      doc.text('EXTRA CHARGES SUBTOTAL:', colPositions[3], yPosition);
-      doc.text(`Rs. ${formatNumberWithCommas(extrasTotal)}`, colPositions[5] + 20, yPosition, { align: 'right' });
+      doc.text('EXTRA CHARGES SUBTOTAL:', colPositions[2], yPosition);
+      doc.text(`Rs. ${formatNumberWithCommas(extrasTotal)}`, colPositions[4] + 20, yPosition, { align: 'right' });
       yPosition += 8;
       doc.setFont('helvetica', 'normal');
     }
@@ -531,34 +534,42 @@ export const generateInvoice = async (saleData, orderData) => {
     doc.text('"PASAN ENTERPRISES (PVT).LTD"', 15, yPosition);
     yPosition += 10;
     
-    // Warranty information (variable per item)
+    // Warranty period section disabled - warranty periods are no longer printed on the invoice.
+    // Kept commented out in case it needs to be re-enabled.
+    // // Warranty information (variable per item)
+    // doc.setFont('helvetica', 'bold');
+    // doc.text('WARRANTY:', 15, yPosition);
+    // doc.setFont('helvetica', 'normal');
+    // yPosition += 6;
+    //
+    // // Check if all items have the same warranty
+    // const warranties = saleData.items.map(item => {
+    //   const cartItem = saleData.cart?.find(c => c.machineId === item.machineId) || item;
+    //   return cartItem.warrantyMonths || item.warrantyMonths || 12;
+    // });
+    //
+    // const uniqueWarranties = [...new Set(warranties)];
+    //
+    // if (uniqueWarranties.length === 1) {
+    //   doc.text(`${uniqueWarranties[0]} MONTHS FROM INVOICE DATE`, 15, yPosition);
+    // } else {
+    //   doc.text('VARIABLE WARRANTY PERIODS AS SPECIFIED PER ITEM:', 15, yPosition);
+    //   yPosition += 5;
+    //   saleData.items.forEach((item, index) => {
+    //     const cartItem = saleData.cart?.find(c => c.machineId === item.machineId) || item;
+    //     const warranty = cartItem.warrantyMonths || item.warrantyMonths || 12;
+    //     const itemName = (cartItem.name || item.name || 'Item').substring(0, 30);
+    //     doc.text(`• ${itemName}: ${warranty} months`, 20, yPosition);
+    //     yPosition += 4;
+    //   });
+    // }
+    // yPosition += 8;
+
+    // Terms & conditions heading (replaces the old WARRANTY heading)
     doc.setFont('helvetica', 'bold');
-    doc.text('WARRANTY:', 15, yPosition);
+    doc.text('TERMS & CONDITIONS:', 15, yPosition);
     doc.setFont('helvetica', 'normal');
     yPosition += 6;
-    
-    // Check if all items have the same warranty
-    const warranties = saleData.items.map(item => {
-      const cartItem = saleData.cart?.find(c => c.machineId === item.machineId) || item;
-      return cartItem.warrantyMonths || item.warrantyMonths || 12;
-    });
-    
-    const uniqueWarranties = [...new Set(warranties)];
-    
-    if (uniqueWarranties.length === 1) {
-      doc.text(`${uniqueWarranties[0]} MONTHS FROM INVOICE DATE`, 15, yPosition);
-    } else {
-      doc.text('VARIABLE WARRANTY PERIODS AS SPECIFIED PER ITEM:', 15, yPosition);
-      yPosition += 5;
-      saleData.items.forEach((item, index) => {
-        const cartItem = saleData.cart?.find(c => c.machineId === item.machineId) || item;
-        const warranty = cartItem.warrantyMonths || item.warrantyMonths || 12;
-        const itemName = (cartItem.name || item.name || 'Item').substring(0, 30);
-        doc.text(`• ${itemName}: ${warranty} months`, 20, yPosition);
-        yPosition += 4;
-      });
-    }
-    yPosition += 8;
 
     // Additional terms
     const termsBullets = [

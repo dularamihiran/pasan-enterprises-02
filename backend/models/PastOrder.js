@@ -287,7 +287,7 @@ pastOrderSchema.pre('save', async function(next) {
     const counterKey = `orderId-${yy}${mmm}`;
     const seq = await Counter.getNextSequence(counterKey, this.$session());
 
-    this.orderId = `${yy}${mmm}_PEIA_${seq.toString().padStart(4, '0')}`;
+    this.orderId = `${yy}${mmm}_PE_${seq.toString().padStart(4, '0')}`;
     next();
   } catch (err) {
     next(err);
