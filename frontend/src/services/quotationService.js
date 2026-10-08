@@ -135,7 +135,7 @@ export const generateQuotationPDF = async (quotationData) => {
       // Company details
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('PASAN ENTERPRISES (PVT). LTD', pageWidth - 15, 15, { align: 'right' });
+      doc.text('PASAN ENTERPRISES', pageWidth - 15, 15, { align: 'right' });
       
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -565,13 +565,13 @@ export const generateQuotationPDF = async (quotationData) => {
     yPosition += 10;
     doc.text('Yours Faithfully,', 15, yPosition);
     yPosition += 5;
-    doc.text('PASAN ENTERPRISES (PVT).LTD', 15, yPosition);
+    doc.text('PASAN ENTERPRISES', 15, yPosition);
     yPosition += 10;
     doc.text('Approved', 15, yPosition);
     yPosition += 5;
-    doc.text('Pradeep Jayawardana', 15, yPosition);
+    doc.text('Pradeep Jayawardena', 15, yPosition);
     yPosition += 5;
-    doc.text('Director', 15, yPosition);
+    doc.text('Partner, Power of Attorney', 15, yPosition);
     
     // Add footer to all pages
     const totalPages = doc.internal.getNumberOfPages();

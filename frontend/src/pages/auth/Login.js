@@ -108,7 +108,7 @@ const Login = ({ onLogin }) => {
                 alt="Pasan Enterprises" 
                 className="h-36 w-auto mx-auto mb-12"
               />
-              <h1 className="text-4xl font-bold mb-4">PASAN ENTERPRISES (PVT) LTD</h1>
+              <h1 className="text-4xl font-bold mb-4">PASAN ENTERPRISES</h1>
               <p className="text-xl text-center text-blue-100">Inventory Management System</p>
             </div>
             <div className="max-w-lg text-center">
@@ -128,7 +128,7 @@ const Login = ({ onLogin }) => {
                 alt="Pasan Enterprises" 
                 className="h-28 w-auto mx-auto mb-6"
               />
-              <h1 className="text-3xl font-bold text-gray-900">PASAN ENTERPRISES (PVT) LTD</h1>
+              <h1 className="text-3xl font-bold text-gray-900">PASAN ENTERPRISES</h1>
               <p className="text-gray-600 text-lg">Inventory Management System</p>
             </div>
 

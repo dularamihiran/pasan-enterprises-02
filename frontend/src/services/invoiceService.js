@@ -144,7 +144,7 @@ export const generateInvoice = async (saleData, orderData) => {
       // Company details (top right)
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('PASAN ENTERPRISES (PVT). LTD', pageWidth - 15, 15, { align: 'right' });
+      doc.text('PASAN ENTERPRISES', pageWidth - 15, 15, { align: 'right' });
       
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -195,8 +195,8 @@ export const generateInvoice = async (saleData, orderData) => {
       doc.text(`Customer VAT No: ${saleData.customerVatNumber}`, 15, yPosition);
     }
 
-    // Add Supplier VAT number (right side)
-    doc.text('Supplier VAT NO: 179781190-7000', pageWidth - 15, yPosition, { align: 'right' });
+    // Add Supplier VAT number (right side) - disabled, not printed on invoice
+    // doc.text('Supplier VAT NO: 179781190-7000', pageWidth - 15, yPosition, { align: 'right' });
     yPosition += 6;
 
     // Add phone number
@@ -529,9 +529,9 @@ export const generateInvoice = async (saleData, orderData) => {
     doc.text('PAYMENT TERMS:', 15, yPosition);
     doc.setFont('helvetica', 'normal');
     yPosition += 6;
-    doc.text('100% by cash on delivery or by a cheque draw to the account name of', 15, yPosition);
+    doc.text('100% by cash on delivery or transferred to the account name of', 15, yPosition);
     yPosition += 5;
-    doc.text('"PASAN ENTERPRISES (PVT).LTD"', 15, yPosition);
+    doc.text('"PASAN ENTERPRISES"', 15, yPosition);
     yPosition += 10;
     
     // Warranty period section disabled - warranty periods are no longer printed on the invoice.
@@ -635,13 +635,13 @@ export const generateInvoice = async (saleData, orderData) => {
     yPosition += 5;
     doc.text('Yours Faithfully,', 15, yPosition);
     yPosition += 5;
-    doc.text('PASAN ENTERPRISES (PVT).LTD', 15, yPosition);
+    doc.text('PASAN ENTERPRISES', 15, yPosition);
     yPosition += 10;
     doc.text('Approved', 15, yPosition);
     yPosition += 5;
-    doc.text('Pradeep Jayawardana', 15, yPosition);
+    doc.text('Pradeep Jayawardena', 15, yPosition);
     yPosition += 5;
-    doc.text('Director', 15, yPosition);
+    doc.text('Partner, Power of Attorney', 15, yPosition);
     yPosition += 10;
 
     // Delivery confirmation and signatures
